@@ -28,6 +28,9 @@ public class HomeController {
         updateUI(Location.CAMBRIDGE); // TODO: PLACEHOLDER fixed location
     }
 
+    @FXML
+    public void onLocationClicked() {}
+
     private void updateUI(Location location) {
         // Ask the contract for the data
         WeatherData data = apiCall.getCurrentWeather(location);
