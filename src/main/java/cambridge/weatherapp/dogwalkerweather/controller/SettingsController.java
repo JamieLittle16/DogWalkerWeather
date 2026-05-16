@@ -6,6 +6,10 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import java.util.Optional;
+import javafx.scene.control.ListCell;
+import javafx.scene.layout.HBox;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 
 public class SettingsController {
     @FXML private Label currentLocationLabel;
@@ -27,6 +31,39 @@ public class SettingsController {
                 // Update the location state and navigate to home
                 RootController.getInstance().setCurrentLocation(newVal);
                 RootController.getInstance().onHomeClicked();
+            }
+        });
+
+        // Create UI card for each saved element
+        locationsList.setCellFactory(listView -> new ListCell<Location>() {
+            @Override
+            protected void updateItem(Location location, boolean empty) {
+                super.updateItem(location, empty);
+
+                // If row is empty make it invisible
+                if (empty || location == null) {
+                    setText(null);
+                    setGraphic(null);
+                    setStyle("-fx-background-color: transparent;");
+                } else {
+                    // Create text label
+                    Label label = new Label(location.getDisplayName());
+                    label.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333333;");
+
+                    // Put it in HBox (acting as the "Card")
+                    HBox card =new HBox(label);
+                    card.setAlignment(Pos.CENTER_LEFT);
+                    card.setPadding(new Insets(15, 20, 15, 20));
+
+                    card.setStyle("-fx-background-color: #e0e0e0; -fx-background-radius: 10;");
+
+                    // Tell JavaFX to display card, not text
+                    setGraphic(card);
+                    setText(null);
+
+                    // Make list row transparent and put a 10 px gap between elements
+                    setStyle("-fx-background-color: transparent; -fx-padding: 0 0 10 0;");
+                }
             }
         });
     }
