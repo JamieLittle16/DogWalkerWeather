@@ -60,7 +60,7 @@ public class SettingsController {
                     Region spacer = new Region();
                     HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                    FontIcon weatherIcon = new FontIcon("fas-cloud-sun");
+                    FontIcon weatherIcon = new FontIcon("fas-cloud-sun"); // TODO: Make this the actual weather
                     weatherIcon.setIconSize(20);
                     weatherIcon.setIconColor(Color.valueOf("#bdc3c7")); // Soft silver
 
@@ -69,12 +69,24 @@ public class SettingsController {
                     card.setAlignment(Pos.CENTER_LEFT);
                     card.setPadding(new Insets(15, 20, 15, 20));
 
-                    // Set card styling
-                    card.setStyle(
-                            "-fx-background-color: rgba(255, 255, 255, 0.9); " +
+                    String defaultStyle =
+                            "-fx-background-color: rgba(255, 255, 255, 0.85); " +
                                     "-fx-background-radius: 12; " +
-                                    "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 4);"
-                    );
+                                    "-fx-cursor: hand; " + // Turns the mouse into a pointer
+                                    "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 4);";
+
+                    String hoverStyle =
+                            "-fx-background-color: rgba(255, 255, 255, 1.0); " +
+                                    "-fx-background-radius: 12; " +
+                                    "-fx-cursor: hand; " +
+                                    "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 12, 0, 0, 6);";
+
+                    // Set card style
+                    card.setStyle(defaultStyle);
+
+                    // Applies hover styles
+                    card.setOnMouseEntered(event -> card.setStyle(hoverStyle));
+                    card.setOnMouseExited(event -> card.setStyle(defaultStyle));
 
                     // Tell JavaFX to display card, not text
                     setGraphic(card);
