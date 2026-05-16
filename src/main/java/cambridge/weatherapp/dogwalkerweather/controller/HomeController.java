@@ -16,7 +16,7 @@ import javafx.scene.control.Label;
 public class HomeController {
     // @FML tells Java to look in Home.fxl for this label, and links it to the var
     @FXML private Label tempLabel;
-    @FXML private Label groundLabel;
+    // @FXML private Label groundLabel;
     @FXML private HumidityCardController humidityWidgetController;
 
     private WeatherProvider apiCall;
@@ -29,7 +29,9 @@ public class HomeController {
     }
 
     @FXML
-    public void onLocationClicked() {}
+    public void onLocationClicked() {
+        RootController.getInstance().onSettingsClicked();
+    }
 
     private void updateUI(Location location) {
         // Ask the contract for the data
@@ -37,7 +39,7 @@ public class HomeController {
 
         // Update the screen
         tempLabel.setText(data.getTemperature() + " °C");
-        groundLabel.setText(data.getGroundCondition());
+        // groundLabel.setText(data.getGroundCondition());
         humidityWidgetController.updateHumidity(data.getHumidity());
     }
 }

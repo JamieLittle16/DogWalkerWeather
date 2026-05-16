@@ -10,14 +10,24 @@ import java.io.IOException;
 * This Class is responsible for switching screens.
 * The different screens will be loaded into this view
 * It could contain some essential buttons that appear on all pages i.e. a navbar
+* This is a singleton class so can be referenced from anywhere
 **/
 public class RootController {
     @FXML private BorderPane mainContainer;
 
+    private static RootController instance;
+
     @FXML
     public void initialize() {
+        // When JavaFX loads this class save it to a static variable
+        instance = this;
         // Load the Home screen immediately when the app starts
         loadScreen("Home.fxml");
+    }
+
+    // Returns the Singleton instance of the class
+    public static RootController getInstance() {
+        return instance;
     }
 
     // Triggered by the "Home" button in the nav bar
