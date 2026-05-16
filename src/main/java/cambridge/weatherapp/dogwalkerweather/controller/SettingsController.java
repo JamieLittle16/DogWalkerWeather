@@ -10,6 +10,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 public class SettingsController {
     @FXML private Label currentLocationLabel;
@@ -50,8 +51,11 @@ public class SettingsController {
                     Label label = new Label(location.getDisplayName());
                     label.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333333;");
 
+                    // Puts a mapPin next to each of them. Can change to actual weather later, but good placeholder
+                    FontIcon mapPin = cambridge.weatherapp.dogwalkerweather.util.IconUtil.getLocationIcon();
+
                     // Put it in HBox (acting as the "Card")
-                    HBox card =new HBox(label);
+                    HBox card = new HBox(15, mapPin, label);
                     card.setAlignment(Pos.CENTER_LEFT);
                     card.setPadding(new Insets(15, 20, 15, 20));
 
