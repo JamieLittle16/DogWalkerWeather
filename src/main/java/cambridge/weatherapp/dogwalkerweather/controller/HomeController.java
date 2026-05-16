@@ -40,8 +40,8 @@ public class HomeController {
         locationLabel.setText(location.getDisplayName());
 
         // Update the screen
-        tempLabel.setText(data.getTemperature() + " °C");
+        tempLabel.setText(data.getCurrentTemperature() + " °C");
         // groundLabel.setText(data.getGroundCondition());
-        humidityWidgetController.updateHumidity(data.getHumidity());
+        humidityWidgetController.updateHumidity(data.getCurrentRelativeHumidity());
     }
 }

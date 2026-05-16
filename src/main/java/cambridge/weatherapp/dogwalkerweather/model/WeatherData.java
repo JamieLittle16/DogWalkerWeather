@@ -1,20 +1,20 @@
 package cambridge.weatherapp.dogwalkerweather.model;
 
-import java.util.ArrayList;
+import java.util.List;
 
 // This class holds the current weather data
 // The object will be returned by api for a specific query
 public class WeatherData {
     private String groundCondition;
-    private ArrayList<HourlyForecast> dailyForecast;
+    private List<HourlyForecast> dailyForecast;
 
-    public WeatherData(String groundCondition, ArrayList<HourlyForecast> dailyForecast) {
+    public WeatherData(String groundCondition, List<HourlyForecast> dailyForecast) {
         this.groundCondition = groundCondition;
         this.dailyForecast = dailyForecast;
     }
 
     public String getGroundCondition() { return groundCondition; }
-    public ArrayList<HourlyForecast> getDailyForecast() { return dailyForecast; }
+    public List<HourlyForecast> getDailyForecast() { return dailyForecast; }
 
     public double getCurrentTemperature() { return dailyForecast.get(0).getTemperature(); }
     public double getCurrentFeelsLikeTemperature() { return dailyForecast.get(0).getFeelsLikeTemperature(); }
