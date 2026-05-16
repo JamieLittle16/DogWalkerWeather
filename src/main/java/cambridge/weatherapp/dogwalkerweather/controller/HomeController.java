@@ -20,12 +20,8 @@ public class HomeController {
     // @FXML private Label groundLabel;
     @FXML private HumidityCardController humidityWidgetController;
 
-    private WeatherProvider apiCall;
-
     @FXML
     public void initialize() {
-        // TODO: currently loads FAKE DATA
-        apiCall = new FakeWeatherProvider();
 
         // Loads current active location by asking the root controller
         Location activeLocation = RootController.getInstance().getCurrentLocation();
@@ -39,7 +35,7 @@ public class HomeController {
 
     private void updateUI(Location location) {
         // Ask the contract for the data
-        WeatherData data = apiCall.getCurrentWeather(location);
+        WeatherData data = RootController.getInstance().getWeatherProvider().getCurrentWeather(location);
 
         locationLabel.setText(location.getDisplayName());
 

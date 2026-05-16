@@ -9,6 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import java.io.IOException;
+import cambridge.weatherapp.dogwalkerweather.api.WeatherProvider;
+import cambridge.weatherapp.dogwalkerweather.api.FakeWeatherProvider;
 
 /*
 * This Class is responsible for switching screens.
@@ -24,12 +26,17 @@ public class RootController {
     // -- Global State Variables
     private Location currentLocation;
     private ObservableList<Location> savedLocations;
+    private WeatherProvider weatherProvider;
 
 
     @FXML
     public void initialize() {
         // When JavaFX loads this class save it to a static variable
         instance = this;
+
+        // Spin up weather API for whole app
+        // TODO: SWAP THIS FOR REAL API!!!!
+        weatherProvider = new FakeWeatherProvider();
 
         // Some default state for now - may add file reading for persistence later
         currentLocation = Location.CAMBRIDGE;
@@ -45,6 +52,10 @@ public class RootController {
     // Returns the Singleton instance of the class
     public static RootController getInstance() {
         return instance;
+    }
+
+    public WeatherProvider getWeatherProvider() {
+        return weatherProvider;
     }
 
     public Location getCurrentLocation() {
