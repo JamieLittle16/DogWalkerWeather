@@ -15,26 +15,33 @@ import javafx.scene.control.Label;
 * */
 public class HomeController {
     // @FML tells Java to look in Home.fxl for this label, and links it to the var
+    @FXML private Label locationLabel;
     @FXML private Label tempLabel;
-    @FXML private Label groundLabel;
+    // @FXML private Label groundLabel;
     @FXML private HumidityCardController humidityWidgetController;
-
-    private WeatherProvider apiCall;
 
     @FXML
     public void initialize() {
-        // TODO: currently loads FAKE DATA
-        apiCall = new FakeWeatherProvider();
-        updateUI(Location.CAMBRIDGE); // TODO: PLACEHOLDER fixed location
+
+        // Loads current active location by asking the root controller
+        Location activeLocation = RootController.getInstance().getCurrentLocation();
+        updateUI(activeLocation);
+    }
+
+    @FXML
+    public void onLocationClicked() {
+        RootController.getInstance().onSettingsClicked();
     }
 
     private void updateUI(Location location) {
         // Ask the contract for the data
-        WeatherData data = apiCall.getCurrentWeather(location);
+        WeatherData data = RootController.getInstance().getWeatherProvider().getCurrentWeather(location);
+
+        locationLabel.setText(location.getDisplayName());
 
         // Update the screen
         tempLabel.setText(data.getTemperature() + " °C");
-        groundLabel.setText(data.getGroundCondition());
+        // groundLabel.setText(data.getGroundCondition());
         humidityWidgetController.updateHumidity(data.getHumidity());
     }
 }

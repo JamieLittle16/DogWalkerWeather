@@ -1,23 +1,73 @@
 package cambridge.weatherapp.dogwalkerweather.controller;
 
+import cambridge.weatherapp.dogwalkerweather.model.Location;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import java.io.IOException;
+import cambridge.weatherapp.dogwalkerweather.api.WeatherProvider;
+import cambridge.weatherapp.dogwalkerweather.api.FakeWeatherProvider;
 
 /*
 * This Class is responsible for switching screens.
 * The different screens will be loaded into this view
 * It could contain some essential buttons that appear on all pages i.e. a navbar
+* This is a singleton class so can be referenced from anywhere
 **/
 public class RootController {
     @FXML private BorderPane mainContainer;
 
+    private static RootController instance;
+
+    // -- Global State Variables
+    private Location currentLocation;
+    private ObservableList<Location> savedLocations;
+    private WeatherProvider weatherProvider;
+
+
     @FXML
     public void initialize() {
+        // When JavaFX loads this class save it to a static variable
+        instance = this;
+
+        // Spin up weather API for whole app
+        // TODO: SWAP THIS FOR REAL API!!!!
+        weatherProvider = new FakeWeatherProvider();
+
+        // Some default state for now - may add file reading for persistence later
+        currentLocation = Location.CAMBRIDGE;
+        savedLocations = FXCollections.observableArrayList();
+        savedLocations.add(Location.OSLO);
+        savedLocations.add(Location.LONDON);
+
+
         // Load the Home screen immediately when the app starts
         loadScreen("Home.fxml");
+    }
+
+    // Returns the Singleton instance of the class
+    public static RootController getInstance() {
+        return instance;
+    }
+
+    public WeatherProvider getWeatherProvider() {
+        return weatherProvider;
+    }
+
+    public Location getCurrentLocation() {
+        return currentLocation;
+    }
+
+    public void setCurrentLocation(Location location) {
+        this.currentLocation = location;
+    }
+
+    public ObservableList<Location> getSavedLocations() {
+        return savedLocations;
     }
 
     // Triggered by the "Home" button in the nav bar
