@@ -1,6 +1,8 @@
 module cambridge.weatherapp.dogwalkerweather {
     requires javafx.controls;
     requires javafx.fxml;
+    requires com.fasterxml.jackson.databind;
+    requires java.net.http;
 
     requires org.kordamp.ikonli.javafx;
 
