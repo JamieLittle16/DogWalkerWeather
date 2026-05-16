@@ -2,37 +2,47 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane style="-fx-background-color: #3bc8c8;"
+<StackPane style="-fx-background-color: linear-gradient(to bottom right, #40E0D0, #187a7a);"
            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="cambridge.weatherapp.dogwalkerweather.controller.SettingsController">
 
     <VBox spacing="20.0">
         <padding>
-            <Insets top="20.0" right="30.0" bottom="20.0" left="30.0"/>
+            <Insets top="25.0" right="25.0" bottom="20.0" left="25.0"/>
         </padding>
 
         <HBox alignment="CENTER_LEFT">
-            <Button text="&lt;" onAction="#onBackClicked"
-                    style="-fx-background-radius: 50; -fx-min-width: 40; -fx-min-height: 40; -fx-background-color: #e0e0e0;"/>
+            <Button onAction="#onBackClicked"
+                    style="-fx-background-radius: 50; -fx-min-width: 40; -fx-min-height: 40; -fx-background-color: #ffffff; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 4);">
+                <graphic>
+                    <FontIcon iconLiteral="fas-arrow-left" iconSize="16" iconColor="#333333"/>
+                </graphic>
+            </Button>
         </HBox>
 
-        <Label text="Current Location" styleClass="title-3" style="-fx-text-fill: white;"/>
-        <VBox alignment="CENTER_LEFT" prefHeight="80.0"
-              styleClass="card, elevated-2"
-              style="-fx-background-color: #e0e0e0; -fx-padding: 20; -fx-background-radius: 15;">
-            <Label fx:id="currentLocationLabel" styleClass="title-2" text="Loading..."/>
-        </VBox>
+        <Label text="Current Location" styleClass="title-4" style="-fx-text-fill: white;"/>
 
-        <Separator style="-fx-background-color: #2D3E50;"/>
+        <HBox alignment="CENTER_LEFT" prefHeight="75.0"
+              style="-fx-background-color: #ffffff; -fx-padding: 0 20 0 20; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 10, 0, 0, 5);">
+            <Label fx:id="currentLocationLabel" styleClass="title-3" text="Loading..."/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <FontIcon iconLiteral="fas-cloud" iconSize="24" iconColor="#bdc3c7"/>
+        </HBox>
 
-        <Label text="Saved Locations" styleClass="title-3" style="-fx-text-fill: white;"/>
+        <Region prefHeight="1.0" minHeight="1.0" maxHeight="1.0" style="-fx-background-color: rgba(255,255,255,0.3);" />
+
+        <Label text="Saved Locations" styleClass="title-4" style="-fx-text-fill: white;"/>
         <ListView fx:id="locationsList" VBox.vgrow="ALWAYS"
-                  style="-fx-background-radius: 15; -fx-background-color: transparent;" />
+                  style="-fx-background-color: transparent; -fx-control-inner-background: transparent; -fx-border-color: transparent; -fx-border-width: 0; -fx-padding: 0;" />
     </VBox>
 
-    <Button text="+" onAction="#onAddClicked" StackPane.alignment="BOTTOM_CENTER"
-            style="-fx-background-radius: 50; -fx-min-width: 60; -fx-min-height: 60; -fx-font-size: 24; -fx-background-color: #e0e0e0;">
+    <Button onAction="#onAddClicked" StackPane.alignment="BOTTOM_CENTER"
+            style="-fx-background-radius: 50; -fx-min-width: 60; -fx-min-height: 60; -fx-background-color: #ffffff; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 12, 0, 0, 6);">
+        <graphic>
+            <FontIcon iconLiteral="fas-plus" iconSize="24" iconColor="#1d8282"/>
+        </graphic>
         <StackPane.margin>
             <Insets bottom="40.0"/>
         </StackPane.margin>

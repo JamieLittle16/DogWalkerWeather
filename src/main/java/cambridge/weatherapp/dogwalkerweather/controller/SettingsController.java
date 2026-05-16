@@ -11,6 +11,9 @@ import javafx.scene.layout.HBox;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import org.kordamp.ikonli.javafx.FontIcon;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 
 public class SettingsController {
     @FXML private Label currentLocationLabel;
@@ -45,29 +48,40 @@ public class SettingsController {
                 if (empty || location == null) {
                     setText(null);
                     setGraphic(null);
-                    setStyle("-fx-background-color: transparent;");
+                    setStyle("-fx-background-color: transparent; -fx-padding: 0;");
                 } else {
                     // Create text label
                     Label label = new Label(location.getDisplayName());
-                    label.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333333;");
+                    label.getStyleClass().add("title-4");
 
-                    // Puts a mapPin next to each of them. Can change to actual weather later, but good placeholder
+                    // Puts a mapPin next to each of them.
                     FontIcon mapPin = cambridge.weatherapp.dogwalkerweather.util.IconUtil.getLocationIcon();
 
+                    Region spacer = new Region();
+                    HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                    FontIcon weatherIcon = new FontIcon("fas-cloud-sun");
+                    weatherIcon.setIconSize(20);
+                    weatherIcon.setIconColor(Color.valueOf("#bdc3c7")); // Soft silver
+
                     // Put it in HBox (acting as the "Card")
-                    HBox card = new HBox(15, mapPin, label);
+                    HBox card = new HBox(15, mapPin, label, spacer, weatherIcon);
                     card.setAlignment(Pos.CENTER_LEFT);
                     card.setPadding(new Insets(15, 20, 15, 20));
 
-                    card.setStyle("-fx-background-color: #e0e0e0; -fx-background-radius: 10;");
+                    // Set card styling
+                    card.setStyle(
+                            "-fx-background-color: rgba(255, 255, 255, 0.9); " +
+                                    "-fx-background-radius: 12; " +
+                                    "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 4);"
+                    );
 
                     // Tell JavaFX to display card, not text
                     setGraphic(card);
                     setText(null);
 
                     // Make list row transparent and put a 10 px gap between elements
-                    setStyle("-fx-background-color: transparent; -fx-padding: 0 0 10 0;");
-                }
+                    setStyle("-fx-background-color: transparent; -fx-padding: 0 0 12 0; -fx-control-inner-background-alt: transparent; -fx-selection-bar: transparent; -fx-selection-bar-non-focused: transparent;");                }
             }
         });
     }
