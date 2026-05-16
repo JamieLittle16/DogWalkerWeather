@@ -25,7 +25,10 @@ public class HomeController {
     public void initialize() {
         // TODO: currently loads FAKE DATA
         apiCall = new FakeWeatherProvider();
-        updateUI(Location.CAMBRIDGE); // TODO: PLACEHOLDER fixed location
+
+        // Loads current active location by asking the root controller
+        Location activeLocation = RootController.getInstance().getCurrentLocation();
+        updateUI(activeLocation);
     }
 
     @FXML

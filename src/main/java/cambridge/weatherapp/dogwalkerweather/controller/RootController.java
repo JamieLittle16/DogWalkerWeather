@@ -1,5 +1,9 @@
 package cambridge.weatherapp.dogwalkerweather.controller;
 
+import cambridge.weatherapp.dogwalkerweather.model.Location;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,10 +21,23 @@ public class RootController {
 
     private static RootController instance;
 
+    // -- Global State Variables
+    private Location currentLocation;
+    private ObservableList<Location> savedLocations;
+
+
     @FXML
     public void initialize() {
         // When JavaFX loads this class save it to a static variable
         instance = this;
+
+        // Some default state for now - may add file reading for persistence later
+        currentLocation = Location.CAMBRIDGE;
+        savedLocations = FXCollections.observableArrayList();
+        savedLocations.add(Location.OSLO);
+        savedLocations.add(Location.LONDON);
+
+
         // Load the Home screen immediately when the app starts
         loadScreen("Home.fxml");
     }
@@ -28,6 +45,18 @@ public class RootController {
     // Returns the Singleton instance of the class
     public static RootController getInstance() {
         return instance;
+    }
+
+    public Location getCurrentLocation() {
+        return currentLocation;
+    }
+
+    public void setCurrentLocation(Location location) {
+        this.currentLocation = location;
+    }
+
+    public ObservableList<Location> getSavedLocations() {
+        return savedLocations;
     }
 
     // Triggered by the "Home" button in the nav bar
