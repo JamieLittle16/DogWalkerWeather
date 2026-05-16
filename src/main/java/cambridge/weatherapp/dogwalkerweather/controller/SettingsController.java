@@ -1,6 +1,8 @@
 package cambridge.weatherapp.dogwalkerweather.controller;
 
 import cambridge.weatherapp.dogwalkerweather.model.Location;
+import cambridge.weatherapp.dogwalkerweather.model.WeatherData;
+import cambridge.weatherapp.dogwalkerweather.util.IconUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
@@ -11,10 +13,15 @@ import javafx.scene.layout.HBox;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import org.kordamp.ikonli.javafx.FontIcon;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
+import javafx.collections.transformation.FilteredList;
 
 public class SettingsController {
     @FXML private Label currentLocationLabel;
     @FXML private ListView<Location> locationsList;
+    @FXML private FontIcon currentWeatherIcon;
 
     @FXML
     private void initialize() {
@@ -22,9 +29,25 @@ public class SettingsController {
         Location current = RootController.getInstance().getCurrentLocation();
         currentLocationLabel.setText(current.getDisplayName());
 
+        // Fetch the weather data for the current location
+        WeatherData currentData = RootController.getInstance().getWeatherProvider().getCurrentWeather(current);
+
+        // Generate the correct icon using your new utility
+        FontIcon dynamicIcon = IconUtil.getWeatherIconFromCode(currentData.getCurrentWeatherCode());
+
+        // Apply the icon to the FXML element
+        currentWeatherIcon.setIconLiteral(dynamicIcon.getIconLiteral());
+        currentWeatherIcon.setIconColor(dynamicIcon.getIconColor());
+
+        // Create a filter that hides the active location from the list
+        FilteredList<Location> filteredLocations = new FilteredList<>(
+                RootController.getInstance().getSavedLocations(),
+                loc -> loc != current
+        );
+
         // Bind the location UI list to the state list
         // Since its an observable list it will auto update the UI upon changing
-        locationsList.setItems(RootController.getInstance().getSavedLocations());
+        locationsList.setItems(filteredLocations);
 
         // Listen for clicks on saved locations
         locationsList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
@@ -45,29 +68,54 @@ public class SettingsController {
                 if (empty || location == null) {
                     setText(null);
                     setGraphic(null);
-                    setStyle("-fx-background-color: transparent;");
+                    setStyle("-fx-background-color: transparent; -fx-padding: 0;");
                 } else {
                     // Create text label
                     Label label = new Label(location.getDisplayName());
-                    label.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333333;");
+                    label.getStyleClass().add("title-4");
 
-                    // Puts a mapPin next to each of them. Can change to actual weather later, but good placeholder
+                    // Puts a mapPin next to each of them.
                     FontIcon mapPin = cambridge.weatherapp.dogwalkerweather.util.IconUtil.getLocationIcon();
 
+                    Region spacer = new Region();
+                    HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                    // Get location weather data:
+                    WeatherData data = RootController.getInstance().getWeatherProvider().getCurrentWeather(location);
+                    FontIcon weatherIcon = IconUtil.getWeatherIconFromCode(data.getCurrentWeatherCode());
+                    weatherIcon.setIconSize(20);
+                    weatherIcon.setIconColor(Color.valueOf("#bdc3c7")); // Soft silver
+
                     // Put it in HBox (acting as the "Card")
-                    HBox card = new HBox(15, mapPin, label);
+                    HBox card = new HBox(15, mapPin, label, spacer, weatherIcon);
                     card.setAlignment(Pos.CENTER_LEFT);
                     card.setPadding(new Insets(15, 20, 15, 20));
 
-                    card.setStyle("-fx-background-color: #e0e0e0; -fx-background-radius: 10;");
+                    String defaultStyle =
+                            "-fx-background-color: rgba(255, 255, 255, 0.85); " +
+                                    "-fx-background-radius: 12; " +
+                                    "-fx-cursor: hand; " + // Turns the mouse into a pointer
+                                    "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 4);";
+
+                    String hoverStyle =
+                            "-fx-background-color: rgba(255, 255, 255, 1.0); " +
+                                    "-fx-background-radius: 12; " +
+                                    "-fx-cursor: hand; " +
+                                    "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 12, 0, 0, 6);";
+
+                    // Set card style
+                    card.setStyle(defaultStyle);
+
+                    // Applies hover styles
+                    card.setOnMouseEntered(event -> card.setStyle(hoverStyle));
+                    card.setOnMouseExited(event -> card.setStyle(defaultStyle));
 
                     // Tell JavaFX to display card, not text
                     setGraphic(card);
                     setText(null);
 
                     // Make list row transparent and put a 10 px gap between elements
-                    setStyle("-fx-background-color: transparent; -fx-padding: 0 0 10 0;");
-                }
+                    setStyle("-fx-background-color: transparent; -fx-padding: 0 0 12 0; -fx-control-inner-background-alt: transparent; -fx-selection-bar: transparent; -fx-selection-bar-non-focused: transparent;");                }
             }
         });
     }
