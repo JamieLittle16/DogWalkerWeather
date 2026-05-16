@@ -41,7 +41,7 @@ public class RootController {
         // Some default state for now - may add file reading for persistence later
         currentLocation = Location.CAMBRIDGE;
         savedLocations = FXCollections.observableArrayList();
-        savedLocations.add(Location.OSLO);
+        savedLocations.add(Location.CAMBRIDGE);
         savedLocations.add(Location.LONDON);
 
 

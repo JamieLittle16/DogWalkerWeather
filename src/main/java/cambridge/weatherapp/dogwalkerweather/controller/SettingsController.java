@@ -14,6 +14,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.collections.transformation.FilteredList;
 
 public class SettingsController {
     @FXML private Label currentLocationLabel;
@@ -25,9 +26,15 @@ public class SettingsController {
         Location current = RootController.getInstance().getCurrentLocation();
         currentLocationLabel.setText(current.getDisplayName());
 
+        // Create a filter that hides the active location from the list
+        FilteredList<Location> filteredLocations = new FilteredList<>(
+                RootController.getInstance().getSavedLocations(),
+                loc -> loc != current
+        );
+
         // Bind the location UI list to the state list
         // Since its an observable list it will auto update the UI upon changing
-        locationsList.setItems(RootController.getInstance().getSavedLocations());
+        locationsList.setItems(filteredLocations);
 
         // Listen for clicks on saved locations
         locationsList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
