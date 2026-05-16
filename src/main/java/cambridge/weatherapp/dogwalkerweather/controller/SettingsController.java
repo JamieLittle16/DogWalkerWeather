@@ -1,6 +1,8 @@
 package cambridge.weatherapp.dogwalkerweather.controller;
 
 import cambridge.weatherapp.dogwalkerweather.model.Location;
+import cambridge.weatherapp.dogwalkerweather.model.WeatherData;
+import cambridge.weatherapp.dogwalkerweather.util.IconUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
@@ -19,12 +21,23 @@ import javafx.collections.transformation.FilteredList;
 public class SettingsController {
     @FXML private Label currentLocationLabel;
     @FXML private ListView<Location> locationsList;
+    @FXML private FontIcon currentWeatherIcon;
 
     @FXML
     private void initialize() {
         // Set current Locarion card text
         Location current = RootController.getInstance().getCurrentLocation();
         currentLocationLabel.setText(current.getDisplayName());
+
+        // Fetch the weather data for the current location
+        WeatherData currentData = RootController.getInstance().getWeatherProvider().getCurrentWeather(current);
+
+        // Generate the correct icon using your new utility
+        FontIcon dynamicIcon = IconUtil.getWeatherIconFromCode(currentData.getCurrentWeatherCode());
+
+        // Apply the icon to the FXML element
+        currentWeatherIcon.setIconLiteral(dynamicIcon.getIconLiteral());
+        currentWeatherIcon.setIconColor(dynamicIcon.getIconColor());
 
         // Create a filter that hides the active location from the list
         FilteredList<Location> filteredLocations = new FilteredList<>(
@@ -67,7 +80,9 @@ public class SettingsController {
                     Region spacer = new Region();
                     HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                    FontIcon weatherIcon = new FontIcon("fas-cloud-sun"); // TODO: Make this the actual weather
+                    // Get location weather data:
+                    WeatherData data = RootController.getInstance().getWeatherProvider().getCurrentWeather(location);
+                    FontIcon weatherIcon = IconUtil.getWeatherIconFromCode(data.getCurrentWeatherCode());
                     weatherIcon.setIconSize(20);
                     weatherIcon.setIconColor(Color.valueOf("#bdc3c7")); // Soft silver
 

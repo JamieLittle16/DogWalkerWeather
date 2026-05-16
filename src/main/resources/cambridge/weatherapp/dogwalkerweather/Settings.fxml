@@ -28,7 +28,7 @@
               style="-fx-background-color: #ffffff; -fx-padding: 0 20 0 20; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 10, 0, 0, 5);">
             <Label fx:id="currentLocationLabel" styleClass="title-3" text="Loading..."/>
             <Region HBox.hgrow="ALWAYS"/>
-            <FontIcon iconLiteral="fas-cloud" iconSize="24" iconColor="#bdc3c7"/>
+            <FontIcon fx:id="currentWeatherIcon" iconSize="24" />
         </HBox>
 
         <Region prefHeight="1.0" minHeight="1.0" maxHeight="1.0" style="-fx-background-color: rgba(255,255,255,0.3);" />
