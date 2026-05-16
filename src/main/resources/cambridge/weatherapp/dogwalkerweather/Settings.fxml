@@ -48,4 +48,21 @@
         </StackPane.margin>
     </Button>
 
+    <StackPane fx:id="addLocationOverlay" visible="false" style="-fx-background-color: rgba(0,0,0,0.4);">
+        <VBox alignment="CENTER" maxWidth="320" maxHeight="450" spacing="15.0"
+              style="-fx-background-color: #ffffff; -fx-background-radius: 20; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 20, 0, 0, 10);">
+
+            <Label text="Add a New Location" styleClass="title-3" style="-fx-text-fill: #1d8282;"/>
+
+            <Region prefHeight="1.0" style="-fx-background-color: #eeeeee;" />
+
+            <ListView fx:id="allLocationsList" VBox.vgrow="ALWAYS"
+                      style="-fx-background-color: transparent; -fx-control-inner-background: transparent; -fx-border-width: 0;" />
+
+            <Button text="Cancel" onAction="#onCancelAdd"
+                     style="-fx-background-color: transparent; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-border-radius: 10; -fx-text-fill: #555555; -fx-font-weight: bold; -fx-min-width: 110; -fx-min-height: 40; -fx-cursor: hand; -fx-effect: null;"
+                     onMouseEntered="#onCancelHover" onMouseExited="#onCancelNormal" fx:id="cancelButton"/>
+        </VBox>
+    </StackPane>
+
 </StackPane>

@@ -4,14 +4,13 @@ import cambridge.weatherapp.dogwalkerweather.model.Location;
 import cambridge.weatherapp.dogwalkerweather.model.WeatherData;
 import cambridge.weatherapp.dogwalkerweather.util.IconUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import java.util.Optional;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.layout.StackPane;
 import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -19,9 +18,20 @@ import javafx.scene.paint.Color;
 import javafx.collections.transformation.FilteredList;
 
 public class SettingsController {
-    @FXML private Label currentLocationLabel;
-    @FXML private ListView<Location> locationsList;
-    @FXML private FontIcon currentWeatherIcon;
+    @FXML
+    private Label currentLocationLabel;
+    @FXML
+    private ListView<Location> locationsList;
+    @FXML
+    private FontIcon currentWeatherIcon;
+
+    // Choice Dialog
+    @FXML
+    private StackPane addLocationOverlay;
+    @FXML
+    private ListView<Location> allLocationsList;
+    @FXML
+    private javafx.scene.control.Button cancelButton;
 
     @FXML
     private void initialize() {
@@ -49,74 +59,135 @@ public class SettingsController {
         // Since its an observable list it will auto update the UI upon changing
         locationsList.setItems(filteredLocations);
 
-        // Listen for clicks on saved locations
-        locationsList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                // Update the location state and navigate to home
-                RootController.getInstance().setCurrentLocation(newVal);
-                RootController.getInstance().onHomeClicked();
-            }
+        // Create UI card for each saved element
+        locationsList.setCellFactory(listView -> {
+            ListCell<Location> cell = new ListCell<Location>() {
+                @Override
+                protected void updateItem(Location location, boolean empty) {
+                    super.updateItem(location, empty);
+
+                    // If row is empty make it invisible
+                    if (empty || location == null) {
+                        setText(null);
+                        setGraphic(null);
+                        setStyle("-fx-background-color: transparent; -fx-padding: 0;");
+                    } else {
+                        // Create text label
+                        Label label = new Label(location.getDisplayName());
+                        label.getStyleClass().add("title-4");
+
+                        // Puts a mapPin next to each of them.
+                        FontIcon mapPin = cambridge.weatherapp.dogwalkerweather.util.IconUtil.getLocationIcon();
+
+                        Region spacer = new Region();
+                        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                        // Get location weather data:
+                        WeatherData data = RootController.getInstance().getWeatherProvider().getCurrentWeather(location);
+                        FontIcon weatherIcon = IconUtil.getWeatherIconFromCode(data.getCurrentWeatherCode());
+                        weatherIcon.setIconSize(20);
+                        weatherIcon.setIconColor(Color.valueOf("#bdc3c7")); // Soft silver
+
+                        // Put it in HBox (acting as the "Card")
+                        HBox card = new HBox(15, mapPin, label, spacer, weatherIcon);
+                        card.setAlignment(Pos.CENTER_LEFT);
+                        card.setPadding(new Insets(15, 20, 15, 20));
+
+                        String defaultStyle =
+                                "-fx-background-color: rgba(255, 255, 255, 0.85); " +
+                                        "-fx-background-radius: 12; " +
+                                        "-fx-cursor: hand; " + // Turns the mouse into a pointer
+                                        "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 4);";
+
+                        String hoverStyle =
+                                "-fx-background-color: rgba(255, 255, 255, 1.0); " +
+                                        "-fx-background-radius: 12; " +
+                                        "-fx-cursor: hand; " +
+                                        "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 12, 0, 0, 6);";
+
+                        // Set card style
+                        card.setStyle(defaultStyle);
+
+                        // Applies hover styles
+                        card.setOnMouseEntered(event -> card.setStyle(hoverStyle));
+                        card.setOnMouseExited(event -> card.setStyle(defaultStyle));
+
+                        // Tell JavaFX to display card, not text
+                        setGraphic(card);
+                        setText(null);
+
+                        // Make list row transparent and put a 10 px gap between elements
+                        setStyle("-fx-background-color: transparent; -fx-padding: 0 0 12 0; -fx-control-inner-background-alt: transparent; -fx-selection-bar: transparent; -fx-selection-bar-non-focused: transparent;");
+                    }
+                }
+            };
+
+            cell.addEventFilter(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> event.consume());
+            cell.addEventFilter(javafx.scene.input.MouseEvent.MOUSE_RELEASED, event -> {
+                event.consume();
+                if (!cell.isEmpty() && cell.getItem() != null) {
+                    javafx.application.Platform.runLater(() -> {
+                        RootController.getInstance().setCurrentLocation(cell.getItem());
+                        RootController.getInstance().onHomeClicked();
+                    });
+                }
+            });
+
+            return cell;
         });
 
-        // Create UI card for each saved element
-        locationsList.setCellFactory(listView -> new ListCell<Location>() {
-            @Override
-            protected void updateItem(Location location, boolean empty) {
-                super.updateItem(location, empty);
+        // Fill the location list with all enum Locations
+        allLocationsList.getItems().setAll(Location.values());
 
-                // If row is empty make it invisible
-                if (empty || location == null) {
-                    setText(null);
-                    setGraphic(null);
-                    setStyle("-fx-background-color: transparent; -fx-padding: 0;");
-                } else {
-                    // Create text label
-                    Label label = new Label(location.getDisplayName());
-                    label.getStyleClass().add("title-4");
+        allLocationsList.setCellFactory(listView -> {
+            ListCell<Location> cell = new ListCell<Location>() {
+                @Override
+                protected void updateItem(Location location, boolean empty) {
+                    super.updateItem(location, empty);
 
-                    // Puts a mapPin next to each of them.
-                    FontIcon mapPin = cambridge.weatherapp.dogwalkerweather.util.IconUtil.getLocationIcon();
+                    if (empty || location == null) {
+                        setText(null);
+                        setGraphic(null);
+                        setStyle("-fx-background-color: transparent; -fx-padding: 0;");
+                    } else {
+                        Label label = new Label(location.getDisplayName());
+                        label.setStyle("-fx-font-size: 16px; -fx-text-fill: #333333;");
 
-                    Region spacer = new Region();
-                    HBox.setHgrow(spacer, Priority.ALWAYS);
+                        HBox card = new HBox(label);
+                        card.setAlignment(Pos.CENTER);
+                        card.setPadding(new Insets(12, 20, 12, 20));
 
-                    // Get location weather data:
-                    WeatherData data = RootController.getInstance().getWeatherProvider().getCurrentWeather(location);
-                    FontIcon weatherIcon = IconUtil.getWeatherIconFromCode(data.getCurrentWeatherCode());
-                    weatherIcon.setIconSize(20);
-                    weatherIcon.setIconColor(Color.valueOf("#bdc3c7")); // Soft silver
+                        // Interactive overlay styles
+                        String defaultStyle = "-fx-background-color: transparent; -fx-background-radius: 8; -fx-cursor: hand;";
+                        String hoverStyle = "-fx-background-color: #f0f4f8; -fx-background-radius: 8; -fx-cursor: hand;"; // Soft background highlight
 
-                    // Put it in HBox (acting as the "Card")
-                    HBox card = new HBox(15, mapPin, label, spacer, weatherIcon);
-                    card.setAlignment(Pos.CENTER_LEFT);
-                    card.setPadding(new Insets(15, 20, 15, 20));
+                        card.setStyle(defaultStyle);
+                        card.setOnMouseEntered(event -> card.setStyle(hoverStyle));
+                        card.setOnMouseExited(event -> card.setStyle(defaultStyle));
 
-                    String defaultStyle =
-                            "-fx-background-color: rgba(255, 255, 255, 0.85); " +
-                                    "-fx-background-radius: 12; " +
-                                    "-fx-cursor: hand; " + // Turns the mouse into a pointer
-                                    "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 4);";
+                        setGraphic(card);
+                        setText(null);
 
-                    String hoverStyle =
-                            "-fx-background-color: rgba(255, 255, 255, 1.0); " +
-                                    "-fx-background-radius: 12; " +
-                                    "-fx-cursor: hand; " +
-                                    "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 12, 0, 0, 6);";
+                        // Make the underlying row structure transparent to prevent the default blue flash selection highlight
+                        setStyle("-fx-background-color: transparent; -fx-padding: 0 0 5 0; -fx-control-inner-background-alt: transparent; -fx-selection-bar: transparent; -fx-selection-bar-non-focused: transparent;");
+                    }
+                }
+            };
+            cell.addEventFilter(javafx.scene.input.MouseEvent.MOUSE_PRESSED, event -> event.consume());
+            cell.addEventFilter(javafx.scene.input.MouseEvent.MOUSE_RELEASED, event -> {
+                event.consume();
+                if (!cell.isEmpty() && cell.getItem() != null) {
+                    javafx.application.Platform.runLater(() -> {
+                        Location newVal = cell.getItem();
+                        if (!RootController.getInstance().getSavedLocations().contains(newVal)) {
+                            RootController.getInstance().getSavedLocations().add(newVal);
+                        }
+                        addLocationOverlay.setVisible(false);
+                    });
+                }
+            });
 
-                    // Set card style
-                    card.setStyle(defaultStyle);
-
-                    // Applies hover styles
-                    card.setOnMouseEntered(event -> card.setStyle(hoverStyle));
-                    card.setOnMouseExited(event -> card.setStyle(defaultStyle));
-
-                    // Tell JavaFX to display card, not text
-                    setGraphic(card);
-                    setText(null);
-
-                    // Make list row transparent and put a 10 px gap between elements
-                    setStyle("-fx-background-color: transparent; -fx-padding: 0 0 12 0; -fx-control-inner-background-alt: transparent; -fx-selection-bar: transparent; -fx-selection-bar-non-focused: transparent;");                }
-            }
+            return cell;
         });
     }
 
@@ -129,17 +200,25 @@ public class SettingsController {
     // Triggered by pressing + button
     @FXML
     public void onAddClicked() {
-        // Native popup (quite simple) to select from Enum of locations
-        ChoiceDialog<Location> dialog = new ChoiceDialog<>(Location.values()[0], Location.values()); // Just grabs first one
-        dialog.setTitle("Add Location");
-        dialog.setHeaderText("Search for a new location:");
+        // Show the dark overlay and white card!
+        addLocationOverlay.setVisible(true);
+    }
 
-        Optional<Location> result = dialog.showAndWait();
-        result.ifPresent(location -> {
-            // Prevent duplicates before adding to the global list
-            if (!RootController.getInstance().getSavedLocations().contains(location)) {
-                RootController.getInstance().getSavedLocations().add(location);
-            }
-        });
+    @FXML
+    public void onCancelAdd() {
+        // Hide it if they change their mind
+        addLocationOverlay.setVisible(false);
+    }
+
+    @FXML
+    public void onCancelHover() {
+        // Darker text and a soft gray background highlight on hover
+        cancelButton.setStyle("-fx-background-color: #f0f2f5; -fx-border-color: #7f8c8d; -fx-border-width: 1.5; -fx-border-radius: 10; -fx-text-fill: #222222; -fx-font-weight: bold; -fx-min-width: 110; -fx-min-height: 40; -fx-cursor: hand;");
+    }
+
+    @FXML
+    public void onCancelNormal() {
+        // Returns seamlessly to the default outlined state
+        cancelButton.setStyle("-fx-background-color: transparent; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-border-radius: 10; -fx-text-fill: #555555; -fx-font-weight: bold; -fx-min-width: 110; -fx-min-height: 40; -fx-cursor: hand;");
     }
 }
