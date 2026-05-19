@@ -2,7 +2,6 @@ package cambridge.weatherapp.dogwalkerweather.controller;
 
 import cambridge.weatherapp.dogwalkerweather.model.Location;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import java.io.IOException;
 import cambridge.weatherapp.dogwalkerweather.api.WeatherProvider;
-import cambridge.weatherapp.dogwalkerweather.api.FakeWeatherProvider;
+import cambridge.weatherapp.dogwalkerweather.api.MetOfficeProvider;
 
 /*
 * This Class is responsible for switching screens.
@@ -35,8 +34,7 @@ public class RootController {
         instance = this;
 
         // Spin up weather API for whole app
-        // TODO: SWAP THIS FOR REAL API!!!!
-        weatherProvider = new FakeWeatherProvider();
+        weatherProvider = new MetOfficeProvider();
 
         // Some default state for now - may add file reading for persistence later
         currentLocation = Location.CAMBRIDGE;

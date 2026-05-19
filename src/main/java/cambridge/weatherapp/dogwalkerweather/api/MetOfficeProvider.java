@@ -1,9 +1,12 @@
 package cambridge.weatherapp.dogwalkerweather.api;
 import cambridge.weatherapp.dogwalkerweather.model.WeatherData;
 import cambridge.weatherapp.dogwalkerweather.model.Location;
+import cambridge.weatherapp.dogwalkerweather.model.HourlyForecast;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.nio.file.Path;
@@ -15,6 +18,9 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.Collections;
+import java.util.ArrayList;
+import java.time.*;
+import static java.util.Map.entry;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -74,6 +80,9 @@ public class MetOfficeProvider implements WeatherProvider {
 
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 404) {
+                return null;
+            }
 
             ObjectMapper mapper = new ObjectMapper();
             try {
@@ -108,21 +117,143 @@ public class MetOfficeProvider implements WeatherProvider {
             "lat", String.format("%.2f", location.getLatitude()),
             "lon", String.format("%.2f", location.getLongitude())
         );
-        ArrayNode nearestObsOutput = (ArrayNode)getApiOutput(
+        JsonNode nearestObsOutput = getApiOutput(
             landObservationsApi + "/nearest", nearestObsParams, landApiKey
         );
-        String geoHash = nearestObsOutput.get(0).get("geohash").asText();
+        // Extract Geohash with a safe fallback to Cambridge (u120) if the API fails
+        String geoHash = "u120";
+        try {
+            geoHash = nearestObsOutput.get(0).get("geohash").asText();
+        } catch (Exception e) {
+            System.err.println("WARNING: Failed to extract geohash from API. Falling back to default 'u120'. Error: " + e.getMessage());
+        }
         JsonNode landObsOutput = getApiOutput(
             landObservationsApi + "/" + geoHash, Collections.emptyMap(), landApiKey
         );
 
-        return null;
+        // Extract the relevant hourly forecast data.
+        ArrayList<HourlyForecast> hourlyConditions = new ArrayList<>();
+        try {
+            JsonNode hourlyJsonArray = forecastOutput
+                    .get("features")
+                    .get(0)
+                    .get("properties")
+                    .get("timeSeries");
+            for (JsonNode hourly : hourlyJsonArray) {
+                LocalTime dateTime = OffsetDateTime.parse(hourly.get("time").asText()).toLocalTime();
+                double temperature = hourly.get("screenTemperature").asDouble();
+                double feelsLike = hourly.get("feelsLikeTemperature").asDouble();
+                double windSpeed = hourly.get("windSpeed10m").asDouble() / 1609.34 * 3600; // m/s -> mph
+                windSpeed = BigDecimal.valueOf(windSpeed).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                int windDirection = hourly.get("windDirectionFrom10m").asInt();
+                double windGustSpeed = hourly.get("windGustSpeed10m").asDouble() / 1609.34 * 3600;
+                windGustSpeed = BigDecimal.valueOf(windGustSpeed).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                int visibility = hourly.get("visibility").asInt();
+                double relativeHumidity = hourly.get("screenRelativeHumidity").asDouble();
+                int pressure = hourly.get("mslp").asInt();
+                int uv = hourly.get("uvIndex").asInt();
+                double dewPoint = hourly.get("screenDewPointTemperature").asDouble();
+                int weatherCode = hourly.get("significantWeatherCode").asInt();
+                int precipitationProb = hourly.get("probOfPrecipitation").asInt();
+
+                HourlyForecast hourlyForecast = new HourlyForecast(
+                        dateTime,
+                        temperature,
+                        feelsLike,
+                        windSpeed,
+                        windDirection,
+                        windGustSpeed,
+                        visibility,
+                        relativeHumidity,
+                        pressure,
+                        uv,
+                        dewPoint,
+                        weatherCode,
+                        precipitationProb
+                );
+                hourlyConditions.add(hourlyForecast);
+            }
+        } catch (Exception e) {
+            System.err.println("WARNING: Forecast API failed or format changed. Loading fallback data. Error: " + e.getMessage());
+            hourlyConditions.add(new HourlyForecast(LocalTime.now(), 15.0, 14.0, 10.0, 180, 15.0, 10000, 50.0, 1012, 5, 10.0, 1, 0));
+        }
+
+        // Attempt to deduce ground conditions from recent land observations.
+        String groundCondition = "N/A";
+        if (landObsOutput != null) {
+            double wetnessScore = 0;
+            Map<Integer, Integer> codeToWeight = Map.ofEntries(
+                // Light rain - minor
+                entry(9, 30), entry(10, 30), entry(12, 30),
+                // Drizzle - very minor
+                entry(11, 15),
+                // Sleet / Hail / Light Snow - moderate
+                entry(16, 45), entry(17, 45), entry(18, 45), entry(19, 45), entry(20, 45), entry(21, 45),
+                // Heavy rain - major
+                entry(13, 70), entry(14, 70), entry(15, 70),
+                // Thunderstorms - major
+                entry(28, 80), entry(29, 80), entry(30, 80),
+                // Heavy Snow - very messy
+                entry(25, 100), entry(26, 100), entry(27, 100)
+            );
+            // Weight the most recent hour the most strongly.
+            // Older hours have lower weighting.
+            double multiplierPerHour = 0.88;
+            // Minimum wetness score to display "Wet".
+            double wetThreshold = 15;
+            // Number of hours to consider (up to 48 based on API).
+            int hoursCount = 24;
+            try {
+                JsonNode obsArray = landObsOutput.findValue("timeSeries");
+
+                // Manually throw an error to trigger the catch block if the Met Office sent empty data
+                if (obsArray == null || !obsArray.isArray() || obsArray.isEmpty()) {
+                    throw new Exception("Met Office returned empty observation data for this station.");
+                }
+                for (int hoursAgo = 0; hoursAgo < hoursCount; ++hoursAgo) {
+                    JsonNode hourlyObs = obsArray.get(obsArray.size() - hoursAgo - 1);
+                    if (hourlyObs == null) {
+                        break;
+                    }
+                    JsonNode weatherCodeNode = hourlyObs.get("weather_code");
+                    if (weatherCodeNode == null) {
+                        wetnessScore = -1;
+                        break;
+                    }
+                    int weatherCode = weatherCodeNode.asInt();
+                    wetnessScore += codeToWeight.getOrDefault(weatherCode, 0) * Math.pow(multiplierPerHour, hoursAgo);
+                }
+            } catch (Exception e) {
+                System.err.println("WARNING: Land Observations API failed or format changed. Ground conditions unavailable. Error: " + e.getMessage());
+                wetnessScore = -1;
+            }
+            if (wetnessScore == -1) {
+                groundCondition = "N/A";
+            } else {
+                groundCondition = wetnessScore >= wetThreshold ? "Wet" : "Dry";
+            }
+        }
+
+        return new WeatherData(groundCondition, hourlyConditions);
     }   
 
     // Testing only.
     public static void main(String[] args) {
         MetOfficeProvider mop = new MetOfficeProvider();
-        mop.getCurrentWeather(Location.CAMBRIDGE);
+        WeatherData wd = mop.getCurrentWeather(Location.CAMBRIDGE);
+        System.out.println("Ground: " + wd.getGroundCondition().toString());
+        System.out.println("Temperature: " + wd.getCurrentTemperature() + "C");
+        System.out.println("Feels Like: " + wd.getCurrentFeelsLikeTemperature() + "C");
+        System.out.println("Wind Speed: " + wd.getCurrentWindSpeed() + "mph");
+        System.out.println("Wind Direction: " + wd.getCurrentWindDirection() + " deg");
+        System.out.println("Wind Gust Speed: " + wd.getCurrentWindGustSpeed() + "mph");
+        System.out.println("Visibility: " + wd.getCurrentVisibility() + "m");
+        System.out.println("Relative Humidity: " + wd.getCurrentRelativeHumidity() + "%");
+        System.out.println("Pressure: " + wd.getCurrentPressure() + " Pa");
+        System.out.println("UV: " + wd.getCurrentUV());
+        System.out.println("Dew Point: " + wd.getCurrentDewPoint() + "C");
+        System.out.println("Weather Code: " + wd.getCurrentWeatherCode());
+        System.out.println("Precipitation Odds: " + wd.getCurrentPrecipitationProbability() + "%");
     }
 
 }

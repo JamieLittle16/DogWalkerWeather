@@ -8,29 +8,29 @@ import java.time.LocalTime;
 */
 public class HourlyForecast {
     private final LocalTime time;
-    private final double temperature;
-    private final double feelsLikeTemperature;
-    private final double windSpeed;
-    private final double windDirection;
-    private final double windGustSpeed;
-    private final double visibility;
-    private final double relativeHumidity;
-    private final double pressure;
-    private final double UV;
-    private final double dewPoint;
+    private final double temperature; // Celsius
+    private final double feelsLikeTemperature; // Celsius
+    private final double windSpeed; // Miles per hour (m/s in API)
+    private final int windDirection; // Coming from direction, degrees relative to North (Clockwise).
+    private final double windGustSpeed; // Miles per hour (m/s in API)
+    private final int visibility; // Metres
+    private final double relativeHumidity; // Percentage
+    private final int pressure; // Pascals
+    private final int UV;
+    private final double dewPoint; // Celsius
     private final int weatherCode;
-    private final int precipitationProbability;
+    private final int precipitationProbability; // Percentage
 
     public HourlyForecast(LocalTime time,
               double temperature,
               double feelsLikeTemperature,
               double windSpeed,
-              double windDirection,
+              int windDirection,
               double windGustSpeed,
-              double visibility,
+              int visibility,
               double relativeHumidity,
-              double pressure,
-              double UV,
+              int pressure,
+              int UV,
               double dewPoint,
               int weatherCode,
               int precipitationProbability) {
@@ -53,12 +53,12 @@ public class HourlyForecast {
     public double getTemperature() { return temperature; }
     public double getFeelsLikeTemperature() { return feelsLikeTemperature; }
     public double getWindSpeed() { return windSpeed; }
-    public double getWindDirection() { return windDirection; }
+    public int getWindDirection() { return windDirection; }
     public double getWindGustSpeed() { return windGustSpeed; }
-    public double getVisibility() { return visibility; }
+    public int getVisibility() { return visibility; }
     public double getRelativeHumidity() { return relativeHumidity; }
-    public double getPressure() { return pressure; }
-    public double getUV() { return UV; }
+    public int getPressure() { return pressure; }
+    public int getUV() { return UV; }
     public double getDewPoint() { return dewPoint; }
     public int getWeatherCode() { return weatherCode; }
     public int getPrecipitationProbability() { return precipitationProbability; }
