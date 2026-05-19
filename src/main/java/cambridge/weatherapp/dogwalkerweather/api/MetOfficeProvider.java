@@ -192,7 +192,7 @@ public class MetOfficeProvider implements WeatherProvider {
             // Number of hours to consider (up to 48 based on API).
             int hoursCount = 24;
             for (int hoursAgo = 0; hoursAgo < hoursCount; ++hoursAgo) {
-                JsonNode hourlyObs = landObsOutput.get(hoursAgo);
+                JsonNode hourlyObs = landObsOutput.get(landObsOutput.size() - hoursAgo - 1);
                 if (hourlyObs == null) {
                     break;
                 }
