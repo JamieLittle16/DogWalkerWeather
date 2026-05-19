@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" prefHeight="120.0" prefWidth="120.0" spacing="10.0"
-      styleClass="card, elevated-2"
-      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="cambridge.weatherapp.dogwalkerweather.controller.SmartWidgetController">
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-    <Label fx:id="title" text="ERROR" styleClass="text-muted" />
+<VBox alignment="CENTER" prefHeight="120.0" prefWidth="120.0" spacing="10.0" styleClass="card, elevated-2" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cambridge.weatherapp.dogwalkerweather.controller.SmartWidgetController" onMouseClicked="#bringUpPopup">
 
-    <Label fx:id="value" text="ERROR" styleClass="title-2" />
+    <Label fx:id="title" styleClass="text-muted" text="ERROR" />
+
+    <Label fx:id="value" styleClass="title-2" text="ERROR" />
 
 </VBox>

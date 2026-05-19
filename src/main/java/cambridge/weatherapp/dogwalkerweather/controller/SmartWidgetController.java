@@ -5,8 +5,6 @@ import cambridge.weatherapp.dogwalkerweather.model.WeatherData;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-import static cambridge.weatherapp.dogwalkerweather.model.SmartWidgetType.UV;
-
 public class SmartWidgetController {
     @FXML private Label title;
     @FXML private Label value;
@@ -46,5 +44,10 @@ public class SmartWidgetController {
                 value.setText(String.valueOf(data.getCurrentUV()));
                 break;
         }
+    }
+
+    @FXML
+    public void bringUpPopup() {
+        System.out.println("FUCK YEAH");
     }
 }
