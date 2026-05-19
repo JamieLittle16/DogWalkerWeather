@@ -1,5 +1,6 @@
 package cambridge.weatherapp.dogwalkerweather.controller;
 
+import cambridge.weatherapp.dogwalkerweather.api.CachedWeatherProvider;
 import cambridge.weatherapp.dogwalkerweather.model.Location;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,7 +35,7 @@ public class RootController {
         instance = this;
 
         // Spin up weather API for whole app
-        weatherProvider = new MetOfficeProvider();
+        weatherProvider = new CachedWeatherProvider(new MetOfficeProvider());
 
         // Some default state for now - may add file reading for persistence later
         currentLocation = Location.CAMBRIDGE;
