@@ -2,11 +2,17 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <VBox alignment="TOP_CENTER" spacing="20.0" style="-fx-background-color: #3bc8c8; -fx-padding: 30px;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cambridge.weatherapp.dogwalkerweather.controller.HomeController">
    <VBox prefHeight="20.0" prefWidth="100.0">
       <children>
-         <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#onLocationClicked" text="Button" />
+          <Button onAction="#onLocationClicked"
+                  style="-fx-background-radius: 50; -fx-min-width: 40; -fx-min-height: 40; -fx-background-color: #ffffff; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 4);">
+              <graphic>
+                  <FontIcon iconLiteral="fas-arrow-left" iconSize="16" iconColor="#333333"/>
+              </graphic>
+          </Button>
       </children>
    </VBox>
 

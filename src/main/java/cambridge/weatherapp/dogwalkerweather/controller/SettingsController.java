@@ -56,7 +56,7 @@ public class SettingsController {
         );
 
         // Bind the location UI list to the state list
-        // Since its an observable list it will auto update the UI upon changing
+        // Since it's an observable list it will auto update the UI upon changing
         locationsList.setItems(filteredLocations);
 
         // Create UI card for each saved element
