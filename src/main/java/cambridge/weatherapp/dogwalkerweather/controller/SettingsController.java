@@ -16,22 +16,19 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.collections.transformation.FilteredList;
+import javafx.scene.control.TextField;
 
 public class SettingsController {
-    @FXML
-    private Label currentLocationLabel;
-    @FXML
-    private ListView<Location> locationsList;
-    @FXML
-    private FontIcon currentWeatherIcon;
+    @FXML private Label currentLocationLabel;
+    @FXML private ListView<Location> locationsList;
+    @FXML private FontIcon currentWeatherIcon;
+    @FXML private TextField searchField;
 
     // Choice Dialog
-    @FXML
-    private StackPane addLocationOverlay;
-    @FXML
-    private ListView<Location> allLocationsList;
-    @FXML
-    private javafx.scene.control.Button cancelButton;
+    @FXML private StackPane addLocationOverlay;
+    @FXML private ListView<Location> allLocationsList;
+    @FXML private javafx.scene.control.Button cancelButton;
+    @FXML private TextField popupSearchField;
 
     @FXML
     private void initialize() {
@@ -54,6 +51,21 @@ public class SettingsController {
                 RootController.getInstance().getSavedLocations(),
                 loc -> loc != current
         );
+
+        // Filter for search findings
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredLocations.setPredicate(loc -> {
+                // Rule 1: Always hide the current location from this list
+                if (loc == current) return false;
+
+                // Rule 2: If the search bar is empty, show all saved locations
+                if (newValue == null || newValue.isEmpty()) return true;
+
+                // Rule 3: Substring search (Case-insensitive)
+                String searchString = newValue.toLowerCase();
+                return loc.getDisplayName().toLowerCase().contains(searchString);
+            });
+        });
 
         // Bind the location UI list to the state list
         // Since it's an observable list it will auto update the UI upon changing
@@ -136,8 +148,27 @@ public class SettingsController {
             return cell;
         });
 
+        // Search field in popup
+        javafx.collections.ObservableList<Location> allLocationsObservable =
+                javafx.collections.FXCollections.observableArrayList(Location.values());
+
+        // Put them in a FilteredList
+        FilteredList<Location> filteredAllLocations = new FilteredList<>(allLocationsObservable, loc -> true);
+
+        // Listen to the new popup search bar
+        popupSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredAllLocations.setPredicate(loc -> {
+                // If search is empty, show everything
+                if (newValue == null || newValue.isEmpty()) return true;
+
+                // Otherwise, fuzzy match the name
+                String searchString = newValue.toLowerCase();
+                return loc.getDisplayName().toLowerCase().contains(searchString);
+            });
+        });
+
         // Fill the location list with all enum Locations
-        allLocationsList.getItems().setAll(Location.values());
+        allLocationsList.setItems(filteredAllLocations);
 
         allLocationsList.setCellFactory(listView -> {
             ListCell<Location> cell = new ListCell<Location>() {

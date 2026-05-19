@@ -34,6 +34,8 @@
         <Region prefHeight="1.0" minHeight="1.0" maxHeight="1.0" style="-fx-background-color: rgba(255,255,255,0.3);" />
 
         <Label text="Saved Locations" styleClass="title-4" style="-fx-text-fill: white;"/>
+        <TextField fx:id="searchField" promptText="Search saved locations..."
+                   style="-fx-background-radius: 15; -fx-padding: 10 15; -fx-border-color: transparent; -fx-background-color: rgba(255,255,255,0.9); -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);"/>
         <ListView fx:id="locationsList" VBox.vgrow="ALWAYS"
                   style="-fx-background-color: transparent; -fx-control-inner-background: transparent; -fx-border-color: transparent; -fx-border-width: 0; -fx-padding: 0;" />
     </VBox>
@@ -55,6 +57,9 @@
             <Label text="Add a New Location" styleClass="title-3" style="-fx-text-fill: #1d8282;"/>
 
             <Region prefHeight="1.0" style="-fx-background-color: #eeeeee;" />
+
+            <TextField fx:id="popupSearchField" promptText="Search all locations..."
+                       style="-fx-background-radius: 10; -fx-padding: 8 12; -fx-border-color: #e0e0e0; -fx-border-radius: 10; -fx-background-color: #fafafa;"/>
 
             <ListView fx:id="allLocationsList" VBox.vgrow="ALWAYS"
                       style="-fx-background-color: transparent; -fx-control-inner-background: transparent; -fx-border-width: 0;" />
