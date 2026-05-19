@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.*?>
+<?import cambridge.weatherapp.dogwalkerweather.controller.ComboWeatherChart?>
 
 <ScrollPane style="-fx-background-color: linear-gradient(to bottom right, #40E0D0, #187a7a);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cambridge.weatherapp.dogwalkerweather.controller.HomeController">
    <content>
@@ -21,9 +22,11 @@
       
           <Label fx:id="tempLabel" style="-fx-text-fill: white; -fx-font-size: 72px; -fx-font-weight: bold;" styleClass="title-1" text="Waiting..." />
       
-          <VBox alignment="CENTER" prefHeight="150" prefWidth="330" style="-fx-border-color: blue;" styleClass="card, elevated-1">
-              <Label styleClass="text-muted" text="Bar Chart Goes Here" />
-          </VBox>
+
+    <VBox alignment="CENTER" prefHeight="150" prefWidth="330" style="-fx-border-color: blue;" styleClass="card, elevated-1">
+<!--        <Label styleClass="text-muted" text="Bar Chart Goes Here" />-->
+        <ComboWeatherChart />
+    </VBox>
       
           
       <VBox alignment="CENTER" spacing="15.0">
