@@ -26,14 +26,13 @@
 
     <VBox alignment="CENTER" spacing="15.0">
         <HBox alignment="CENTER" spacing="15.0">
-            <fx:include fx:id="UVWidget" source="HumidityCard.fxml" style="-fx-border-color: blue;" />
-            <fx:include fx:id="groundWidget" source="HumidityCard.fxml" style="-fx-border-color: blue;" />
+            <fx:include fx:id="DewPointWidget" source="SmartWidget.fxml" style="-fx-border-color: blue;" />
+            <fx:include fx:id="WindSpeedWidget" source="SmartWidget.fxml" style="-fx-border-color: blue;" />
         </HBox>
 
         <HBox alignment="CENTER" spacing="15.0">
-            <fx:include fx:id="humidityWidget" source="HumidityCard.fxml" style="-fx-border-color: blue;" />
-            <fx:include fx:id="windspeedWidget" source="HumidityCard.fxml" style="-fx-border-color: blue;" />
+            <fx:include fx:id="VisibilityWidget" source="SmartWidget.fxml" style="-fx-border-color: blue;" />
+            <fx:include fx:id="HumidityWidget" source="SmartWidget.fxml" style="-fx-border-color: blue;" />
         </HBox>
     </VBox>
-
 </VBox>
