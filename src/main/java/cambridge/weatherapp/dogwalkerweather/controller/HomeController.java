@@ -1,6 +1,7 @@
 package cambridge.weatherapp.dogwalkerweather.controller;
 
 import cambridge.weatherapp.dogwalkerweather.model.Location;
+import cambridge.weatherapp.dogwalkerweather.model.SmartWidgetType;
 import cambridge.weatherapp.dogwalkerweather.model.WeatherData;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -16,7 +17,10 @@ public class HomeController {
     @FXML private Label locationLabel;
     @FXML private Label tempLabel;
     // @FXML private Label groundLabel;
-    @FXML private SmartWidgetController humidityWidgetController;
+    @FXML private SmartWidgetController DewPointWidgetController;
+    @FXML private SmartWidgetController WindSpeedWidgetController;
+    @FXML private SmartWidgetController VisibilityWidgetController;
+    @FXML private SmartWidgetController HumidityWidgetController;
 
     @FXML
     public void initialize() {
@@ -38,8 +42,12 @@ public class HomeController {
         locationLabel.setText(location.getDisplayName());
 
         // Update the screen
-        tempLabel.setText(data.getCurrentTemperature() + " °C");
         // groundLabel.setText(data.getGroundCondition());
-        humidityWidgetController.updateHumidity(data.getCurrentRelativeHumidity());
+        tempLabel.setText(data.getCurrentTemperature() + " °C");
+
+        DewPointWidgetController.setType(SmartWidgetType.DEW_POINT, data);
+        WindSpeedWidgetController.setType(SmartWidgetType.WIND_SPEED, data);
+        VisibilityWidgetController.setType(SmartWidgetType.VISIBILITY, data);
+        HumidityWidgetController.setType(SmartWidgetType.HUMIDITY, data);
     }
 }
