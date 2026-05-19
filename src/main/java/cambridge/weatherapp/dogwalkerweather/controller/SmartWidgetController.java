@@ -3,10 +3,11 @@ package cambridge.weatherapp.dogwalkerweather.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-public class HumidityCardController {
-    @FXML private Label humidityValueLabel;
+public class SmartWidgetController {
+    @FXML private Label title;
+    @FXML private Label value;
 
     public void updateHumidity(double humidityPercentage) {
-        humidityValueLabel.setText(humidityPercentage + "%");
+        value.setText(humidityPercentage + "%");
     }
 }

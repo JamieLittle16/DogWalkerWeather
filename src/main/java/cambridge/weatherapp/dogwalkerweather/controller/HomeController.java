@@ -1,7 +1,5 @@
 package cambridge.weatherapp.dogwalkerweather.controller;
 
-import cambridge.weatherapp.dogwalkerweather.api.FakeWeatherProvider;
-import cambridge.weatherapp.dogwalkerweather.api.WeatherProvider;
 import cambridge.weatherapp.dogwalkerweather.model.Location;
 import cambridge.weatherapp.dogwalkerweather.model.WeatherData;
 import javafx.fxml.FXML;
@@ -18,7 +16,7 @@ public class HomeController {
     @FXML private Label locationLabel;
     @FXML private Label tempLabel;
     // @FXML private Label groundLabel;
-    @FXML private HumidityCardController humidityWidgetController;
+    @FXML private SmartWidgetController humidityWidgetController;
 
     @FXML
     public void initialize() {
