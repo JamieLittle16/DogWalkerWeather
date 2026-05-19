@@ -48,7 +48,7 @@
         </StackPane.margin>
     </Button>
 
-    <StackPane fx:id="addLocationOverlay" visible="true" style="-fx-background-color: rgba(0,0,0,0.4);">
+    <StackPane fx:id="addLocationOverlay" visible="false" style="-fx-background-color: rgba(0,0,0,0.4);">
         <VBox alignment="CENTER" maxWidth="320" maxHeight="450" spacing="15.0"
               style="-fx-background-color: #ffffff; -fx-background-radius: 20; -fx-padding: 25; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 20, 0, 0, 10);">
 
