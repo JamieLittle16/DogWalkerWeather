@@ -5,10 +5,10 @@
 <VBox alignment="CENTER" prefHeight="120.0" prefWidth="120.0" spacing="10.0"
       styleClass="card, elevated-2"
       xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="cambridge.weatherapp.dogwalkerweather.controller.HumidityCardController">
+      fx:controller="cambridge.weatherapp.dogwalkerweather.controller.SmartWidgetController">
 
-    <Label text="Humidity" styleClass="text-muted" />
+    <Label fx:id="title" text="ERROR" styleClass="text-muted" />
 
-    <Label fx:id="humidityValueLabel" text="--%" styleClass="title-2" />
+    <Label fx:id="value" text="ERROR" styleClass="title-2" />
 
 </VBox>

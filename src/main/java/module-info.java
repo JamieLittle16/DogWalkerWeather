@@ -13,4 +13,5 @@ module cambridge.weatherapp.dogwalkerweather {
     opens cambridge.weatherapp.dogwalkerweather to javafx.fxml;
     opens cambridge.weatherapp.dogwalkerweather.controller to javafx.fxml;
     exports cambridge.weatherapp.dogwalkerweather;
+    opens cambridge.weatherapp.dogwalkerweather.model to javafx.fxml;
 }

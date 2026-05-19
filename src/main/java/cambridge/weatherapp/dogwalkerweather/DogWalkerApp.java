@@ -17,7 +17,7 @@ public class DogWalkerApp extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(DogWalkerApp.class.getResource("/cambridge/weatherapp/dogwalkerweather/RootLayout.fxml"));
 
         // Set dimensions to look like a mobile phone (width 390, height 844) // TODO: Ensure this is correct - Scalable?
-        Scene scene = new Scene(fxmlLoader.load(), 390, 844);
+        Scene scene = new Scene(fxmlLoader.load(), 400, 844);
 
         stage.setTitle("Dog Walker Weather");
         stage.setScene(scene);

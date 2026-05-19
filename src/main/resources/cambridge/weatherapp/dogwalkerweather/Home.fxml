@@ -2,37 +2,44 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.*?>
 <?import cambridge.weatherapp.dogwalkerweather.controller.ComboWeatherChart?>
 
-
-<VBox alignment="TOP_CENTER" spacing="20.0" style="-fx-background-color: #3bc8c8; -fx-padding: 30px;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cambridge.weatherapp.dogwalkerweather.controller.HomeController">
-   <VBox prefHeight="20.0" prefWidth="100.0">
-      <children>
-         <Button alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#onLocationClicked" text="Button" />
-      </children>
-   </VBox>
-
-    <HBox alignment="CENTER" spacing="10.0">
-        <Label fx:id="locationLabel" style="-fx-text-fill: white;" styleClass="title-2" text="Cambridge" />
-    </HBox>
-
-    <Label fx:id="tempLabel" style="-fx-text-fill: white; -fx-font-size: 72px; -fx-font-weight: bold;" styleClass="title-1" text="Waiting..." />
+<ScrollPane style="-fx-background-color: linear-gradient(to bottom right, #40E0D0, #187a7a);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cambridge.weatherapp.dogwalkerweather.controller.HomeController">
+   <content>
+      <VBox alignment="TOP_CENTER" spacing="20.0" style="-fx-padding: 30px;">
+         <VBox prefHeight="20.0" prefWidth="100.0">
+                <Button onAction="#onLocationClicked" style="-fx-background-radius: 50; -fx-min-width: 40; -fx-min-height: 40; -fx-background-color: #ffffff; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 4);">
+                    <graphic>
+                        <FontIcon iconColor="#333333" iconLiteral="fas-map-marker-alt" iconSize="16" />
+                    </graphic>
+                </Button>
+         </VBox>
+      
+          <HBox alignment="CENTER" spacing="10.0">
+              <Label fx:id="locationLabel" style="-fx-text-fill: white;" styleClass="title-2" text="Cambridge" />
+          </HBox>
+      
+          <Label fx:id="tempLabel" style="-fx-text-fill: white; -fx-font-size: 72px; -fx-font-weight: bold;" styleClass="title-1" text="Waiting..." />
+      
 
     <VBox alignment="CENTER" prefHeight="150" prefWidth="330" style="-fx-border-color: blue;" styleClass="card, elevated-1">
 <!--        <Label styleClass="text-muted" text="Bar Chart Goes Here" />-->
         <ComboWeatherChart />
     </VBox>
+      
+          
+      <VBox alignment="CENTER" spacing="15.0">
+          <HBox alignment="CENTER" spacing="15.0">
+              <fx:include fx:id="DewPointWidget" source="SmartWidget.fxml" style="-fx-border-color: blue;" />
+              <fx:include fx:id="WindSpeedWidget" source="SmartWidget.fxml" style="-fx-border-color: blue;" />
+          </HBox>
 
-    <VBox alignment="CENTER" spacing="15.0">
-        <HBox alignment="CENTER" spacing="15.0">
-            <fx:include fx:id="UVWidget" source="HumidityCard.fxml" style="-fx-border-color: blue;" />
-            <fx:include fx:id="groundWidget" source="HumidityCard.fxml" style="-fx-border-color: blue;" />
-        </HBox>
-
-        <HBox alignment="CENTER" spacing="15.0">
-            <fx:include fx:id="humidityWidget" source="HumidityCard.fxml" style="-fx-border-color: blue;" />
-            <fx:include fx:id="windspeedWidget" source="HumidityCard.fxml" style="-fx-border-color: blue;" />
-        </HBox>
-    </VBox>
-
-</VBox>
+          <HBox alignment="CENTER" spacing="15.0">
+              <fx:include fx:id="VisibilityWidget" source="SmartWidget.fxml" style="-fx-border-color: blue;" />
+              <fx:include fx:id="HumidityWidget" source="SmartWidget.fxml" style="-fx-border-color: blue;" />
+          </HBox>
+      </VBox>
+  </VBox>
+   </content>
+</ScrollPane>
